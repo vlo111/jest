@@ -11,7 +11,7 @@ export const Appointment = ({customer: {firstName}}) => (
 
 export const AppointmentsDayView = ({appointments}) => {
     const [selectedAppointment, setSelectedAppointment] = useState(0);
-    console.log({...appointments[selectedAppointment]})
+
     return (
         <div id="appointmentsDayView">
             <ol>
