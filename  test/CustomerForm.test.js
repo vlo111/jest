@@ -16,6 +16,7 @@ describe('CustomerForm', () => {
     ({render, container} = createContainer());
   });
 
+  //#region check inputs
   const expectToBeInputFieldOfTypeText = formElement => {
     expect(formElement).not.toBeNull();
     expect(formElement.tagName).toEqual('INPUT');
@@ -27,6 +28,7 @@ describe('CustomerForm', () => {
       render(<CustomerForm />);
       expectToBeInputFieldOfTypeText(field(fieldName));
     });
+  //#endregion
 
   const itIncludesTheExistingValue = (fieldName) =>
     it('includes the existing value', () => {
@@ -61,19 +63,14 @@ describe('CustomerForm', () => {
     expect(field('firstName').value).toEqual('Ashley');
   });
 
-  it.skip('renders a label for the first name field', () => {
-    render();
+  it('renders a label for the first name field', () => {
+    render(<CustomerForm firstName="Ashley"/>);
     expect(labelFor('firstName').textContent).toEqual('First name');
   });
 
   it('assigns an id that matches the label id to the first name field', () => {
     render(<CustomerForm/>);
     expect(field('firstName').id).toEqual('firstName');
-  });
-
-  it.skip('renders a label for the first name field', () => {
-    render();
-    expect(labelFor('firstName').textContent).toEqual('First name');
   });
 
   it('saves new first name when submitted', async () => {
@@ -105,6 +102,7 @@ describe('CustomerForm', () => {
 
   describe('last name field', () => {
     itRendersAsATextBox('lastName');
+    itIncludesTheExistingValue('lastName');
   });
 
   it('has a submit button', () => {

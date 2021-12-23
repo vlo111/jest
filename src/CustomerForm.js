@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-export const CustomerForm = ({ firstName, onSubmit }) => {
+export const CustomerForm = ({ firstName, lastName, onSubmit }) => {
   // const customer = {firstName};
-  const [ customer, setCustomer ] = useState({ firstName });
+  const [ customer, setCustomer ] = useState({ firstName, lastName });
 
   const handleChangeFirstName = ({ target }) => {
     setCustomer(customer => ({
@@ -26,6 +26,8 @@ export const CustomerForm = ({ firstName, onSubmit }) => {
     <input
       type="text"
       name="lastName"
+      value={customer.lastName}
+      onChange={handleChangeFirstName}
     />
     <input type="submit" value="Add" />
   </form>;
