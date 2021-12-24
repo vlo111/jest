@@ -4,6 +4,7 @@ import {CustomerForm} from '../src/CustomerForm';
 import ReactTestUtils from 'react-dom/test-utils';
 
 describe('CustomerForm', () => {
+  //#region fields
   let render, container;
 
   const form = id => container.querySelector(`form[id="${id}"]`);
@@ -11,10 +12,13 @@ describe('CustomerForm', () => {
   const labelFor = formElement => container.querySelector(`label[for="${formElement}"]`);
 
   const field = name => form('customer').elements[name];
+  //#endregion
 
+  //#region beforeEach
   beforeEach(() => {
     ({render, container} = createContainer());
   });
+  //#endregion
 
   //#region check inputs
   const expectToBeInputFieldOfTypeText = formElement => {
@@ -30,6 +34,7 @@ describe('CustomerForm', () => {
     });
   //#endregion
 
+  //#region it fields
   const itIncludesTheExistingValue = (fieldName) =>
     it('includes the existing value', () => {
       render(<CustomerForm { ...{[fieldName]: 'value'} } />);
@@ -37,20 +42,35 @@ describe('CustomerForm', () => {
     });
 
   const itSubmitsNewValue = (fieldName, value) =>
-  it('saves new value when submitted', async () => {
-    expect.hasAssertions();
-    render(
-      <CustomerForm
-        { ...{[fieldName]: 'existingValue'} }
-        onSubmit={props =>
-          expect(props[fieldName]).toEqual(value)
-        }
-      />);
-    await ReactTestUtils.Simulate.change(field(fieldName), {
-      target: { value, name: fieldName }
+    it('saves new value when submitted', async () => {
+      let submitArg;
+      render(
+        <CustomerForm
+          { ...{[fieldName]: 'initial value'} }
+          onSubmit={customer => submitArg = customer}
+        />);
+
+      await ReactTestUtils.Simulate.change(field(fieldName), {
+        target: { value, name: fieldName }
+      });
+
+      await ReactTestUtils.Simulate.submit(form('customer'));
+
+      expect(submitArg[fieldName]).toEqual(value);
     });
-    await ReactTestUtils.Simulate.submit(form('customer'));
-  });
+
+  const itSubmitsExistingValue = fieldName =>
+    it('saves existing value when submitted', async () => {
+      let submitArg;
+      render(<CustomerForm
+        { ...{[fieldName]: 'value'} }
+        onSubmit={customer => submitArg = customer}
+      />);
+      ReactTestUtils.Simulate.submit(form('customer'));
+      expect(submitArg[fieldName]).toEqual('value');
+    });
+
+  //#endregion
 
   it('renders a form', () => {
     render(<CustomerForm/>);
@@ -68,25 +88,25 @@ describe('CustomerForm', () => {
     expect(field('firstName').id).toEqual('firstName');
   });
 
-  describe('first name field', () => {
-    itRendersAsATextBox('firstName');
-    itIncludesTheExistingValue('firstName');
-    // itRendersALabel('firstName', 'First name');
-    // itAssignsAnIdThatMatchesTheLabelId('firstName');
-    // itSubmitsExistingValue('firstName', 'firstName');
-    itSubmitsNewValue('firstName', 'anotherFirstName');
-  });
-
-  describe('last name field', () => {
-    itRendersAsATextBox('lastName');
-    itIncludesTheExistingValue('lastName');
-  });
-
   it('has a submit button', () => {
     render(<CustomerForm />);
     const submitButton = container.querySelector(
       'input[type="submit"]'
     );
     expect(submitButton).not.toBeNull();
+  });
+
+  describe('first name field', () => {
+    itRendersAsATextBox('firstName');
+    itIncludesTheExistingValue('firstName');
+    // itRendersALabel('firstName', 'First name');
+    // itAssignsAnIdThatMatchesTheLabelId('firstName');
+    itSubmitsNewValue('firstName', 'anotherFirstName');
+    itSubmitsExistingValue('firstName');
+  });
+
+  describe('last name field', () => {
+    itRendersAsATextBox('lastName');
+    itIncludesTheExistingValue('lastName');
   });
 });
